@@ -5,6 +5,7 @@
 #include "Div.h"
 #include "Mul.h"
 #include "Minus.h"
+#include "ShuntingYard.h"
 
 int main() {
     std::cout << "Hello, World!" << std::endl;
