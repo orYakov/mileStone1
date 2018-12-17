@@ -15,7 +15,7 @@ using namespace std;
 class ShuntingYard {
     vector<string> operators = {"+", "-", "*", "/"};
     queue<string> queue1;
-    stack<string> stack1;
+    stack<string> stack2;
 public:
 
     bool isnumber(string token);
