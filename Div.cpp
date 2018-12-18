@@ -10,5 +10,6 @@ Div::Div(Expression *first, Expression *second) : BinaryExpression(first,
 }
 
 double Div::calculate() {
+    cout << (left->calculate() / right->calculate()) << endl;
     return left->calculate() / right->calculate();
 }

@@ -10,5 +10,6 @@ Plus::Plus(Expression *first, Expression *second) : BinaryExpression(first,
 }
 
 double Plus::calculate() {
+    cout << (left->calculate() + right->calculate()) << endl;
     return left->calculate() + right->calculate();
 }

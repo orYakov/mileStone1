@@ -7,6 +7,7 @@
 Num::Num(double value) : value(value) {}
 
 double Num::calculate() {
+    cout << value << endl;
     return value;
 }
 

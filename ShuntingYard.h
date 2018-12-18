@@ -9,19 +9,29 @@
 #include <vector>
 #include <queue>
 #include <stack>
+#include <map>
+#include "Num.h"
+#include "Plus.h"
+#include "Minus.h"
+#include "Div.h"
+#include "Mul.h"
 
 using namespace std;
 /// balh blah blah
 class ShuntingYard {
-    vector<string> operators = {"+", "-", "*", "/"};
-    queue<string> queue1;
-    stack<string> stack2;
+    vector<char> operators = {'+', '-', '*', '/'};
+    deque<string> resQueue;
+    stack<char> opStack;
+    map<char, int> priority;
 public:
-
-    bool isnumber(string token);
-    bool isOperator(string token);
-    bool isOpenBracket(string token);
-    bool isCloseBracket(string token);
+    bool isOperator(char token);
+    bool isOpenBracket(char token);
+    bool isCloseBracket(char token);
+    void initPriority();
+    deque<string> makePostFixQueue (string tokens);
+    bool isNumber(string token);
+    Expression* evaluateExpression(string tokens);
+    Expression* createSimpleExp(char op, Expression* &leftExp, Expression* &rightExp);
 
 };
 
