@@ -28,7 +28,7 @@ public:
     bool isOpenBracket(char token);
     bool isCloseBracket(char token);
     void initPriority();
-    deque<string> makePostFixQueue (string tokens);
+    deque<string> makePostFixQueue (string &tokens);
     bool isNumber(string token);
     Expression* evaluateExpression(string tokens);
     Expression* createSimpleExp(char op, Expression* &leftExp, Expression* &rightExp);

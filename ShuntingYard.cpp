@@ -30,7 +30,7 @@ void ShuntingYard::initPriority() {
     priority.insert(pair<char, int>('(', 0));
 }
 
-deque<string> ShuntingYard::makePostFixQueue(string tokens) {
+deque<string> ShuntingYard::makePostFixQueue(string &tokens) {
     initPriority();
     deque<string> resQueue;
     for (int i = 0; i < tokens.size(); ++i) {
@@ -165,7 +165,7 @@ Expression *ShuntingYard::evaluateExpression(string tokens) {
         else if (isNumber(token)) {
             Expression *num = new Num(stoi(token));
             expStack.push(num);
-//            if (expStack.size() == 2) {
+//            if (expStack.size() == 2) {///
 //                Expression *leftExp = expStack.top();
 //                expStack.pop();
 //                Expression *rightExp = expStack.top();
