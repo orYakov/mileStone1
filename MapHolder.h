@@ -6,6 +6,7 @@
 #define MILESTONE1_MAPHOLDER_H
 #include <iostream>
 #include <map>
+#include <vector>
 
 using namespace std;
 
@@ -14,6 +15,8 @@ class MapHolder {
     map<string, double> symbolTable;
     map<string, double> pathAndValueMap;
     map<string, string> varAndPathMap;
+    string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
+    vector<string> vars = {breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0};
 
     // Private constructor so that no objects can be created.
     MapHolder() {
@@ -46,6 +49,8 @@ public:
     void setPathValue(string path, double value);
 
     void setVarPath(string var, string path);
+
+    const vector<string> &getVars() const;
 };
 
 

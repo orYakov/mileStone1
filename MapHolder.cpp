@@ -59,4 +59,6 @@ void MapHolder::setVarPath(string var, string path) {
     varAndPathMap[var] = path;
 }
 
-
+const vector<string> &MapHolder::getVars() const {
+    return vars;
+}
