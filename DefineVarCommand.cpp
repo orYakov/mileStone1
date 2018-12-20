@@ -3,62 +3,75 @@
 //
 
 #include "DefineVarCommand.h"
+#include "MapHolder.h"
 
-
-int DefineVarCommand::doCommand(string commandOperation) {
+int DefineVarCommand::doCommand(vector<string> commandOperation) {
+    MapHolder* mapHolder = MapHolder::getInstance();
     string var;
     string bind = "bind";
     bool isBind = false;
 
     // get the var name
-    var = findVarInLine(commandOperation);
+    var = commandOperation[0];
     if (var.empty()) {
         throw "var not found";
     }
     // check if the word "bind" appears
-    size_t found = commandOperation.find(bind);
-    if (found != string::npos) {
-        isBind = true;
+    if (commandOperation.size() == 4) { // number of arguments including "bind"
+        if (bind == commandOperation[2]) {
+            isBind = true;
+        }
     }
     if (isBind) {
         // create a new symbol: var and the value 0
-        symbolTable.insert(pair<string, double>(var, 0));
+        mapHolder->setVarValue(var, 0);
+//        symbolTable[var] = 0;
+        mapHolder->setVarPath(var, commandOperation[3]);
+//        varAndPathMap[var] = commandOperation[3];
+        mapHolder->setPathValue(commandOperation[3], 0); // TODO TODO
+//        pathAndValueMap[commandOperation[3]] = 0; // TODO TODO
     } else {
         // if "bind" doesn't appear
-        string varLine = commandOperation;
-        varLine.erase(0, var.size());
-        string varToFind = findVarInLine(varLine);
-        if (!varToFind.empty()) {
-            // create a new symbol: var and the value of an already existing var
-            if (symbolTable.count(varToFind)) {
-                double newValue = symbolTable.at(varToFind);
-                symbolTable.insert(pair<string, double>(var, newValue));
-            } else {
-                throw "wrong var";
-            }
+        string varToFind = commandOperation[2]; // [0] is var, [1] is "=", [2] is another var
+
+        // create a new symbol: var and the value of an already existing var
+        if (mapHolder->getSymbolTable().count(varToFind)) {
+            double newValue = mapHolder->getSymbolTable().at(varToFind);
+//            double newValue = symbolTable.at(varToFind);
+            mapHolder->setVarValue(var, newValue);
+//            symbolTable[var] = newValue;
+//            symbolTable.insert(pair<string, double>(var, newValue));
         } else {
             // calculate the expression after the '=', and create a new symbol"
             // var and the calculated value of the expression
+            string toEvaluate = commandOperation[2];
+            ShuntingYard shuntingYard;
+            Expression* expression = shuntingYard.createExpression(toEvaluate);
+            double newValue = expression->calculate();
+            delete expression;
+//            symbolTable[var] = newValue;
+            mapHolder->setVarValue(var, newValue);
+//            symbolTable.insert(pair<string, double>(var, newValue));
         }
     }
 
 
 }
 
-string DefineVarCommand::findVarInLine(string &line) {
-    string var;
-    bool foundVar = false;
-    for (int i = 0; i < vars.size(); ++i) {
-        var = vars[i];
-        // Find first occurrence of the var
-        size_t found = line.find(var);
-        if (found != string::npos) {
-            foundVar = true;
-            break;
-        }
-    }
-    if (!foundVar) {
-        var.clear();
-    }
-    return var;
-}
+//string DefineVarCommand::findVarInLine(string &line) {
+//    string var;
+//    bool foundVar = false;
+//    for (int i = 0; i < vars.size(); ++i) {
+//        var = vars[i];
+//        // Find first occurrence of the var
+//        size_t found = line.find(var);
+//        if (found != string::npos) {
+//            foundVar = true;
+//            break;
+//        }
+//    }
+//    if (!foundVar) {
+//        var.clear();
+//    }
+//    return var;
+//}

@@ -6,6 +6,7 @@
 #include "Mul.h"
 #include "Minus.h"
 #include "ShuntingYard.h"
+#include "MapHolder.h"
 
 //#include <iostream>
 #include <list>
@@ -15,6 +16,7 @@
 using namespace std;
 
 int main() {
+
     ShuntingYard x = ShuntingYard();
     list < Expression * > list1;
     Expression* a = x.createExpression("10 + 2 * 6");

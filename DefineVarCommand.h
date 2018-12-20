@@ -11,11 +11,13 @@
 
 class DefineVarCommand : public Command {
     map<string, double> symbolTable;
-    string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
-    vector<string> vars = {breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0};
+//    string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
+//    vector<string> vars = {breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0};
+    map<string, double> pathAndValueMap;
+    map<string, string> varAndPathMap;
 public:
-    virtual int doCommand(string commandOperation);
-    string findVarInLine(string &line);
+    virtual int doCommand(vector<string> commandOperation);
+    //string findVarInLine(string &line);
 };
 
 

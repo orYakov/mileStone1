@@ -6,12 +6,14 @@
 #define MILESTONE1_COMMAND_H
 
 #include <iostream>
+#include <vector>
+#include "ShuntingYard.h"
 
 using namespace std;
 
 class Command {
 public:
-    virtual int doCommand(string commandOperation);
+    virtual int doCommand(vector<string> commandOperation);
 };
 
 
