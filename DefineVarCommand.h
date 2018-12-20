@@ -7,11 +7,15 @@
 
 #include "Command.h"
 #include <map>
+#include <vector>
+
 class DefineVarCommand : public Command {
     map<string, double> symbolTable;
+    string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
+    vector<string> vars = {breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0};
 public:
-    DefineVarCommand();
-    void initSymbolTable();
+    virtual int doCommand(string commandOperation);
+    string findVarInLine(string &line);
 };
 
 
