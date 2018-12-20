@@ -10,6 +10,6 @@ Minus::Minus(Expression *first, Expression *second) : BinaryExpression(first,
 }
 
 double Minus::calculate() {
-    cout << (left->calculate() - right->calculate()) << endl;
+    //cout << (left->calculate() - right->calculate()) << endl;
     return left->calculate() - right->calculate();
 }

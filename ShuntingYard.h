@@ -17,28 +17,21 @@
 #include "Mul.h"
 
 using namespace std;
-/// balh blah blah
 
-enum StackType {EXP, OP};
 
 class ShuntingYard {
+    map<char, int> prcedence;
     vector<char> operators = {'+', '-', '*', '/'};
-    deque<string> resQueue;
-    stack<char> opStack;
-    map<char, int> priority;
-    map<int, StackType> whichStack;
 public:
-    bool isOperator(char token);
-    bool isOpenBracket(char token);
-    bool isCloseBracket(char token);
-    void initPriority();
-    deque<string> makePostFixQueue (string &tokens);
-    bool isNumber(string token);
-    Expression* evaluateExpression(string tokens);
-    Expression* createSimpleExp(char op, Expression* &leftExp, Expression* &rightExp);
-    bool isNextNeg(deque<string> &preFixQueue, stack<char> &opStack);
-    Expression* fullyCalculate(deque<string> &preFixQueue);
 
+    ShuntingYard();
+    void initializeMap();
+
+    int precedence(char operation);
+
+    Expression *createExpression(string tokens);
+    Expression* applyOp(Expression* val1,Expression*  val2,char operation);
+    bool isOperator(char token);
 };
 
 

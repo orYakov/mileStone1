@@ -10,7 +10,7 @@ Mul::Mul(Expression *first, Expression *second) : BinaryExpression(first,
 }
 
 double Mul::calculate() {
-    cout << (left->calculate() * right->calculate()) << endl;
+    //cout << (left->calculate() * right->calculate()) << endl;
     return left->calculate() * right->calculate();
 }
 
