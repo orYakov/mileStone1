@@ -44,7 +44,7 @@ int LoopCommand::doCommand(vector<string> commandOperation, int index) {
     } else if (condition == "<") {
         while (firstExp < secondExp) {
             parser.parse();
-            firstExp = mapHolder->;
+            firstExp = shuntingYard.createExpression(strExp1)->calculate();
             secondExp = shuntingYard.createExpression(strExp2)->calculate();
         }
     } else if (condition == ">") {

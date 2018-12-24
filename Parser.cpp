@@ -78,6 +78,7 @@ void Parser::parse() {
             callCondition();
         }
     }
+    index = 0;
 }
 
 int Parser::getReturnIndex(vector<string> commandOperation, int index) {
