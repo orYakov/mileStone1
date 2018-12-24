@@ -15,13 +15,12 @@ class MapHolder {
     map<string, double> symbolTable;
     map<string, double> pathAndValueMap;
     map<string, string> varAndPathMap;
-    string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
-    vector<string> vars = {breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0};
+    //string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
+    vector<string> vars = {"brakes", "throttle", "heading", "airspeed", "roll",
+                           "pitch", "rudder", "aileron", "elevator", "alt", "h0"};
 
     // Private constructor so that no objects can be created.
-    MapHolder() {
-
-    }
+    MapHolder();
 
 public:
     static MapHolder* getInstance();

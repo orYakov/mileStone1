@@ -1,6 +1,6 @@
 
 #include "ShuntingYard.h"
-
+#include "MapHolder.h"
 
 
 ShuntingYard::ShuntingYard() {
@@ -49,6 +49,24 @@ Expression *ShuntingYard::createExpression(string tokens) {
     // stack to store operators.
     stack<char> ops;
 
+    // replace possible vars of the expression-to-be
+    MapHolder* mapHolder = MapHolder::getInstance();
+    vector<string> vars = mapHolder->getVars();
+    map<string, double> symbols = mapHolder->getSymbolTable();
+    double replaceValue;
+    for (int i = 0; i < vars.size(); ++i) {
+        size_t found = tokens.find(vars[i]);
+        if (found != string::npos) {
+            if (symbols.count(vars[i])) {
+                replaceValue = symbols.at(vars[i]);
+                string strRepVal = to_string(replaceValue);
+                // Replace (vars[i].size) characters from "found-th" index with strRepVal
+                tokens.replace(found, vars[i].length(), strRepVal);
+            }
+        }
+    }
+
+
     for (i = 0; i < tokens.length(); i++) {
 
         // Current token is a whitespace,
@@ -94,6 +112,7 @@ Expression *ShuntingYard::createExpression(string tokens) {
                 ops.pop();
 
                 values.push(applyOp(val1, val2, op));
+                treatedMinus = false;
             }
 
             // pop opening brace.

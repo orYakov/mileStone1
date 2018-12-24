@@ -3,8 +3,9 @@
 //
 
 #include "MapHolder.h"
+MapHolder* MapHolder::instance = nullptr;
 
-MapHolder *MapHolder::getInstance() {
+ MapHolder *MapHolder::getInstance() {
     if (instance == nullptr) {
         instance = new MapHolder;
     }
@@ -61,4 +62,8 @@ void MapHolder::setVarPath(string var, string path) {
 
 const vector<string> &MapHolder::getVars() const {
     return vars;
+}
+
+MapHolder::MapHolder() {
+
 }

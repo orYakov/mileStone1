@@ -7,8 +7,9 @@
 
 #include "Command.h"
 
-class PrintCommand : Command {
-    virtual int doCommand(vector<string> commandOperation);
+class PrintCommand : public Command {
+public:
+    virtual int doCommand(vector<string> commandOperation, int index);
 };
 
 

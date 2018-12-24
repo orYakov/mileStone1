@@ -6,7 +6,7 @@
 #define MILESTONE1_SLEEPCOMMAND_H
 #include "Command.h"
 
-class SleepCommand : Command {
+class SleepCommand : public Command {
 public:
     virtual int doCommand(vector<string> commandOperation);
 };

@@ -4,14 +4,17 @@
 
 #include "PrintCommand.h"
 #include "MapHolder.h"
+#include "Parser.h"
 
-int PrintCommand::doCommand(vector<string> commandOperation) {
-    string toPrint = commandOperation[0];
+int PrintCommand::doCommand(vector<string> commandOperation, int index) {
+    string toPrint = commandOperation[index + 1]; // skip the word "print"
     MapHolder* mapHolder = MapHolder::getInstance();
     vector<string> vars = mapHolder->getVars();
     map<string, double> symbols = mapHolder->getSymbolTable();
     double replaceValue;
     bool createExp = false;
+    int resIndex = Parser::getReturnIndex(commandOperation, index);
+
     for (int i = 0; i < vars.size(); ++i) {
         size_t found = toPrint.find(vars[i]);
         if (found != string::npos) {
@@ -32,4 +35,5 @@ int PrintCommand::doCommand(vector<string> commandOperation) {
     } else {
         cout << toPrint << endl;
     }
+    return resIndex;
 }

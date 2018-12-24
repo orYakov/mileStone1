@@ -9,13 +9,21 @@
 #include <map>
 #include <vector>
 #include "Command.h"
+#include "MapHolder.h"
 
 using namespace std;
 
 class Parser {
     map<string, Command*> stringCommandMap;
+    MapHolder* mapHolder = MapHolder::getInstance();
+    vector<string> commands;
+    int index;
 public:
-    void parse(vector<string> lexedData);
+    Parser(vector<string> commandsList);
+    //void parse(vector<string> lexedData);
+    void parse();
+    void callCondition();
+    static int getReturnIndex(vector<string> commandOperation, int index);
 };
 
 

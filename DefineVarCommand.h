@@ -16,7 +16,7 @@ class DefineVarCommand : public Command {
     map<string, double> pathAndValueMap;
     map<string, string> varAndPathMap;
 public:
-    virtual int doCommand(vector<string> commandOperation);
+    virtual int doCommand(vector<string> commandOperation, int index);
     //string findVarInLine(string &line);
 };
 

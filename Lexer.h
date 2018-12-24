@@ -19,6 +19,9 @@ class Lexer {
 public:
 
     vector<string> lex(string name);
+    void contract(vector<string> &line);
+    bool isOperator(string str);
+    bool isWhiteSpace(string str);
 
 };
 
