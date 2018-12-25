@@ -8,7 +8,7 @@
 
 class SleepCommand : public Command {
 public:
-    virtual int doCommand(vector<string> commandOperation);
+    virtual int doCommand(vector<string> commandOperation, int index);
 };
 
 

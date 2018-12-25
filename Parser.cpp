@@ -10,6 +10,7 @@
 #include "LoopCommand.h"
 #include "IfCommand.h"
 #include "DefinitionCommand.h"
+#include "SleepCommand.h"
 
 using namespace std;
 
@@ -20,6 +21,7 @@ Parser::Parser(vector<string> commandsList) {
     //this->stringCommandMap.insert(pair<string, Command*>("connect",new ConnectCommand));
     stringCommandMap.insert(pair<string, Command*>("var", new DefineVarCommand));
     stringCommandMap.insert(pair<string, Command*>("print", new PrintCommand));
+    stringCommandMap.insert(pair<string, Command*>("sleep", new SleepCommand));
 }
 
 
