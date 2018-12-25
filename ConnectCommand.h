@@ -7,7 +7,7 @@
 #define MILESTONE1_CONNECTCOMMAND_H
 
 
-class ConnectCommand : public Command {
+class ConnectCommand: public Command {
     string ip;
     int port;
 public:
@@ -16,7 +16,6 @@ public:
     virtual double doCommand();
 
     void sendData(string path, double value);
-
 
 };
 
