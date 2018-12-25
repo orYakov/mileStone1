@@ -1,6 +1,3 @@
-//
-// Created by shani on 16/12/18.
-//
 
 #include "Parser.h"
 #include "OpenServerCommand.h"

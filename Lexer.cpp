@@ -3,7 +3,7 @@
 //
 
 
-
+#define LINE_SEPARATOR "@"
 #include "Lexer.h"
 #include <fstream>
 
@@ -38,7 +38,7 @@ vector<string> Lexer::lex(string name) {
                 toContract.push_back(token);
             }
             contract(toContract);
-            toContract.push_back("@");
+            toContract.push_back(LINE_SEPARATOR);
             lexi.insert(lexi.end(), toContract.begin(), toContract.end());
             toContract.clear();
             //lexi.push_back("@"); // mark of end of line
