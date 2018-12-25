@@ -50,6 +50,12 @@ string MapHolder::getPathByVar(string var) {
 
 void MapHolder::setVarValue(string var, double value) {
     symbolTable[var] = value;
+    for (int i = 0; i< vars.size(); ++i) {
+        if (vars[i] == var){
+            return;
+        }
+    }
+    vars.push_back(var);
 }
 
 void MapHolder::setPathValue(string path, double value) {
@@ -58,6 +64,7 @@ void MapHolder::setPathValue(string path, double value) {
 
 void MapHolder::setVarPath(string var, string path) {
     varAndPathMap[var] = path;
+    vars.push_back(var);
 }
 
 const vector<string> &MapHolder::getVars() const {
