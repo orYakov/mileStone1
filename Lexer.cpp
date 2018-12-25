@@ -76,7 +76,7 @@ bool Lexer::isOperator(string str) {
 bool Lexer::isWhiteSpace(string str) {
     return ((str == "") || (str == " ") || (str == "\n") || (str == "\t") || (str == "\r"));
 }
-
+///
 
 
 

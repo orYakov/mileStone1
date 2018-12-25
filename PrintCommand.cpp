@@ -47,3 +47,4 @@ int PrintCommand::doCommand(vector<string> commandOperation, int index) {
     }
     return resIndex;
 }
+////

@@ -13,3 +13,4 @@ double Div::calculate() {
     //cout << (left->calculate() / right->calculate()) << endl;
     return left->calculate() / right->calculate();
 }
+///

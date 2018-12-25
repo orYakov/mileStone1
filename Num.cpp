@@ -10,5 +10,5 @@ double Num::calculate() {
     //cout << value << endl;
     return value;
 }
-
+///
 

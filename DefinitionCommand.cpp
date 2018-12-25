@@ -20,3 +20,4 @@ int DefinitionCommand::doCommand(vector<string> commandOperation, int index) {
 
     return resIndex;
 }
+///

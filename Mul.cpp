@@ -15,3 +15,4 @@ double Mul::calculate() {
 }
 
 
+///

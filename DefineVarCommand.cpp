@@ -84,3 +84,4 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
 //    }
 //    return var;
 //}
+///

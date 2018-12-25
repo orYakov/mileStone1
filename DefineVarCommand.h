@@ -22,3 +22,4 @@ public:
 
 
 #endif //MILESTONE1_DEFINEVARCOMMAND_H
+///

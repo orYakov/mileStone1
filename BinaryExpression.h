@@ -16,3 +16,4 @@ public:
     virtual double calculate() = 0;
 };
 #endif //MILESTONE1_BINARYEXPRESSION_H
+///
