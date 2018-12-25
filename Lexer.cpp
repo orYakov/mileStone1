@@ -13,6 +13,7 @@ vector<string> Lexer::lex(string name) {
     ifstream fileReader(name);
     string delimiter = " ";
     string token;
+    vector<string> toContract;
     //fileReader.open(name);
     if (fileReader.is_open()) {
         while (fileReader.good()) {
@@ -21,18 +22,26 @@ vector<string> Lexer::lex(string name) {
                 continue;
             }
             line += " ";
+            // remove quots of path
             int quots;
             while ((quots = line.find("\"")) != string::npos) {
+                if (line.find("bind") == string::npos) { // if "bind" is not found, don't remove quots
+                    break;
+                }
                 line.erase(line.begin() + quots, line.begin() +(quots + 1));
             }
             int pos = 0;
             while ((pos = line.find(delimiter)) != string::npos) {
                 token = line.substr(0, pos);
-                lexi.push_back(token);
+                //lexi.push_back(token);
                 line.erase(0, pos + delimiter.length());
+                toContract.push_back(token);
             }
-            contract(lexi);
-            lexi.push_back("@"); // mark of end of line
+            contract(toContract);
+            toContract.push_back("@");
+            lexi.insert(lexi.end(), toContract.begin(), toContract.end());
+            toContract.clear();
+            //lexi.push_back("@"); // mark of end of line
         }
         fileReader.close();
     } else cout << "Unable to open file";
@@ -54,8 +63,8 @@ void Lexer::contract(vector<string> &line) {
             }
             temp = line[i - 1] + line[i] + line[i + 1];
             line[i - 1] = temp;
-            line.erase((line.begin() + i), (line.begin() + i + 1));
-            --i;
+            line.erase((line.begin() + i), (line.begin() + i + 2));
+            i --;
         }
     }
 }

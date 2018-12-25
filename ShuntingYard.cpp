@@ -56,13 +56,15 @@ Expression *ShuntingYard::createExpression(string tokens) {
     double replaceValue;
     for (int i = 0; i < vars.size(); ++i) {
         size_t found = tokens.find(vars[i]);
-        if (found != string::npos) {
+        while (found != string::npos) {
             if (symbols.count(vars[i])) {
                 replaceValue = symbols.at(vars[i]);
                 string strRepVal = to_string(replaceValue);
                 // Replace (vars[i].size) characters from "found-th" index with strRepVal
                 tokens.replace(found, vars[i].length(), strRepVal);
             }
+            //found += vars[i].length();
+            found = tokens.find(vars[i]);
         }
     }
 
