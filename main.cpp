@@ -10,6 +10,7 @@
 #include "PrintCommand.h"
 #include "Lexer.h"
 #include "Parser.h"
+#include <thread>
 
 //#include <iostream>
 #include <list>
@@ -24,6 +25,7 @@ int main() {
     vector<string> lexedData = lexer.lex("bdika.txt");
     Parser parser(lexedData);
     parser.parse();
+
 
 
 //    MapHolder* mapHolder = MapHolder::getInstance();

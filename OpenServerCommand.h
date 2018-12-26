@@ -8,12 +8,12 @@
 #include "Command.h"
 
 class OpenServerCommand : public Command {
-    vector<string> pathes;
+    //vector<string> pathes;
 public:
     virtual int doCommand(vector<string> commandOperation, int index);
-    void createServer(int port, int waitTime);
-    void initPathes();
-    vector<string> littleLexer(string line, char c);
+    static void createServer(int port, int waitTime, bool* toDetach);
+    static void initPathes(vector<string> &pathes);
+    static vector<string> littleLexer(string line, char c);
 };
 
 

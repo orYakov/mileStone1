@@ -13,6 +13,7 @@
 #include <string.h>
 
 #include <sys/socket.h>
+#include <thread>
 #include "MapHolder.h"
 #include "Parser.h"
 
@@ -23,12 +24,23 @@ int OpenServerCommand::doCommand(vector<string> commandOperation, int index) {
     string strWaitTime = commandOperation[index + 2];
     int port = (int) (shuntingYard.createExpression(strPort)->calculate());
     int waitTime = (int) (shuntingYard.createExpression(strWaitTime)->calculate());
-    createServer(port, waitTime);
+    //cout << "starting to create server" <<endl;
+    bool toDetach = false;
+    std::thread serverThread(createServer, port, waitTime, &toDetach);
+    while (true) {
+        if (toDetach) {
+            break;
+        }
+    }
+    if (toDetach) {
+        serverThread.detach();
+    }
+    //createServer(port, waitTime);
 
     return resIndex;
 }
 
-void OpenServerCommand::initPathes() {
+void OpenServerCommand::initPathes(vector<string> &pathes) {
     pathes.push_back("/instrumentation/airspeed-indicator/indicated-speed-kt");
     pathes.push_back("/instrumentation/altimeter/indicated-altitude-ft");
     pathes.push_back("/instrumentation/altimeter/pressure-alt-ft");
@@ -55,13 +67,14 @@ void OpenServerCommand::initPathes() {
 }
 
 
-void OpenServerCommand::createServer(int port, int waitTime) {
+void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach) {
+    vector<string> pathes;
     int sockfd, newsockfd, portno, clilen;
     char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
     int n;
 
-    initPathes();
+    initPathes(pathes);
 
     /* First call to socket() function */
     sockfd = socket(AF_INET, SOCK_STREAM, 0);
@@ -96,6 +109,7 @@ void OpenServerCommand::createServer(int port, int waitTime) {
     newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,
                        (socklen_t *) &clilen);
     cout<<"connection succesful"<< endl;
+    *toDetach = true; //TODO delete this
     if (newsockfd < 0) {
         perror("ERROR on accept");
         throw "error in accepting socket";
@@ -110,6 +124,7 @@ void OpenServerCommand::createServer(int port, int waitTime) {
             perror("ERROR reading from socket");
             throw "cannot read socket";
         }
+        *toDetach = true;
 
         MapHolder* mapHolder = MapHolder::getInstance();
         string curBuffer = buffer;
