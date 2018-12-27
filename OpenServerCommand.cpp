@@ -29,14 +29,15 @@ int OpenServerCommand::doCommand(vector<string> commandOperation, int index) {
     //cout << "starting to create server" <<endl;
     bool toDetach = false;
     std::thread serverThread(createServer, port, waitTime, &toDetach, &mapHolder);
-    while (true) {
-        if (toDetach) {
-            break;
-        }
-    }
-    if (toDetach) {
-        serverThread.detach();
-    }
+//    while (true) {
+//        if (toDetach) {
+//            break;
+//        }
+//    }
+//    if (toDetach) {
+//        serverThread.detach();
+//    }
+    serverThread.detach();
     //createServer(port, waitTime);
 
     return resIndex;
@@ -131,6 +132,7 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, Map
 
         //MapHolder* mapHolder = MapHolder::getInstance();
         string curBuffer = buffer;
+        /*
         vector<string> lexedBuffer = littleLexer(curBuffer, ',');
         for (int i = 0; i < lexedBuffer.size(); ++i) {
             string path = pathes[i];
@@ -140,6 +142,7 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, Map
             (*pMapHolder)->setPathValue(path, pathValue);
             mutex1.unlock();
         }
+         */
 
         printf("Here is the message: %s\n", buffer);
 
@@ -152,7 +155,9 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, Map
         }
         //sleep(1 / waitTime);
 
-        //if (*(pMapHolder)->get
+        if ((*pMapHolder)->isStopThreadLoop()) {
+            break;
+        }
 
     }
 }

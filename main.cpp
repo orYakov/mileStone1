@@ -11,6 +11,8 @@
 #include "Lexer.h"
 #include "Parser.h"
 #include <thread>
+#include "OpenServerCommand.h"
+#include "ConnectCommand.h"
 
 //#include <iostream>
 #include <list>
@@ -21,12 +23,29 @@ using namespace std;
 
 int main() {
 
-    Lexer lexer;
-    vector<string> lexedData = lexer.lex("bdika.txt");
-    Parser parser(lexedData);
-    parser.parse();
+//    Lexer lexer;
+//    vector<string> lexedData = lexer.lex("bdika.txt");
+//    Parser parser(lexedData);
+//    parser.parse();
 
-
+    OpenServerCommand openServerCommand;
+    vector<string> vector1;
+    vector1.push_back("openDataServer");
+    vector1.push_back("5400");
+    vector1.push_back("10");
+    vector1.push_back("@");
+    openServerCommand.doCommand(vector1, 0);
+    ConnectCommand connectCommand;
+    vector<string> vector2;
+    vector2.push_back("connect");
+    vector2.push_back("127.0.0.1");
+    vector2.push_back("5402");
+    vector2.push_back("@");
+    connectCommand.doCommand(vector2, 0);
+    MapHolder* mapHolder = MapHolder::getInstance();
+    int sockfd = mapHolder->getSockfd();
+    connectCommand.sendData("path", 30.0, sockfd);
+    mapHolder->setStopThreadLoop(true);
 
 //    MapHolder* mapHolder = MapHolder::getInstance();
 //    mapHolder->setVarValue("alt", 30);
