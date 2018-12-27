@@ -5,6 +5,7 @@
 #include "DefineVarCommand.h"
 #include "MapHolder.h"
 #include "Parser.h"
+#include <mutex>
 
 int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
     MapHolder* mapHolder = MapHolder::getInstance();
@@ -12,7 +13,7 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
     string bind = "bind";
     bool isBind = false;
     int resIndex = Parser::getReturnIndex(commandOperation, index);
-
+    mutex mutex1;
 
 
 
@@ -31,24 +32,32 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
         }
     //}
     if (isBind) {
-        // create a new symbol: var and the value 0
-        mapHolder->setVarValue(var, 0);
-//        symbolTable[var] = 0;
+        // create a new symbol
+        mutex1.lock();
         mapHolder->setVarPath(var, commandOperation[index + 3]);
-//        varAndPathMap[var] = commandOperation[3];
-        mapHolder->setPathValue(commandOperation[index + 3], 0); // TODO TODO
-//        pathAndValueMap[commandOperation[3]] = 0; // TODO TODO
+        double pathValue;
+        if (mapHolder->getPathAndValueMap().count(commandOperation[index + 3])) {
+            pathValue = mapHolder->getValueByPath(commandOperation[index + 3]);
+        } else {
+            pathValue = 0;
+        }
+        mapHolder->setVarValue(var, pathValue);
+        mutex1.unlock();
+        //mapHolder->setPathValue(commandOperation[index + 3], 0); // TODO TODO
+
     } else {
         // if "bind" doesn't appear
         string varToFind = commandOperation[index + 2]; // [0] is var, [1] is "=", [2] is another var
 
         // create a new symbol: var and the value of an already existing var
-        if (mapHolder->getSymbolTable().count(varToFind)) {
+        mutex1.lock();
+        map<string, double> symbolTableCopy = mapHolder->getSymbolTable();
+        mutex1.unlock();
+        if (symbolTableCopy.count(varToFind)) {
+            mutex1.lock();
             double newValue = mapHolder->getSymbolTable().at(varToFind);
-//            double newValue = symbolTable.at(varToFind);
             mapHolder->setVarValue(var, newValue);
-//            symbolTable[var] = newValue;
-//            symbolTable.insert(pair<string, double>(var, newValue));
+            mutex1.unlock();
         } else {
             // calculate the expression after the '=', and create a new symbol"
             // var and the calculated value of the expression
@@ -58,7 +67,9 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
             double newValue = expression->calculate();
             delete expression;
 //            symbolTable[var] = newValue;
+            mutex1.lock();
             mapHolder->setVarValue(var, newValue);
+            mutex1.unlock();
 //            symbolTable.insert(pair<string, double>(var, newValue));
         }
     }

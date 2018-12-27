@@ -8,6 +8,7 @@
 #include <map>
 #include <vector>
 #include <mutex>
+#include <thread>
 
 using namespace std;
 
@@ -21,6 +22,13 @@ class MapHolder {
     //mutex mutex1;
     int sockfd = 0;
     bool stopThreadLoop = false;
+    thread* serverThread;
+public:
+    thread *getServerThread() const;
+
+    void setServerThread(thread *serverThread);
+
+private:
 
     // Private constructor so that no objects can be created.
     MapHolder();

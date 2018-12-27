@@ -39,6 +39,7 @@ Expression *ShuntingYard::applyOp(Expression *val1, Expression *val2, char opera
 // Function that returns value of
 // expression after evaluation.
 Expression *ShuntingYard::createExpression(string tokens) {
+    mutex mutex1;
     int i;
     enum LastPush {OP, VAL};
     LastPush lastPush;
@@ -51,8 +52,10 @@ Expression *ShuntingYard::createExpression(string tokens) {
 
     // replace possible vars of the expression-to-be
     MapHolder* mapHolder = MapHolder::getInstance();
+    mutex1.lock();
     vector<string> vars = mapHolder->getVars();
     map<string, double> symbols = mapHolder->getSymbolTable();
+    mutex1.unlock();
     double replaceValue;
     for (int i = 0; i < vars.size(); ++i) {
         size_t found = tokens.find(vars[i]);

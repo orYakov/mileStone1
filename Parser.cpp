@@ -8,6 +8,7 @@
 #include "IfCommand.h"
 #include "DefinitionCommand.h"
 #include "SleepCommand.h"
+#include "ConnectCommand.h"
 
 using namespace std;
 
@@ -15,7 +16,7 @@ Parser::Parser(vector<string> commandsList) {
     commands = commandsList;
     index = 0;
     stringCommandMap.insert(pair<string, Command*>("openDataServer",new OpenServerCommand));
-    //this->stringCommandMap.insert(pair<string, Command*>("connect",new ConnectCommand));
+    stringCommandMap.insert(pair<string, Command*>("connect",new ConnectCommand));
     stringCommandMap.insert(pair<string, Command*>("var", new DefineVarCommand));
     stringCommandMap.insert(pair<string, Command*>("print", new PrintCommand));
     stringCommandMap.insert(pair<string, Command*>("sleep", new SleepCommand));
@@ -69,12 +70,18 @@ void Parser::parse() {
         if (c != NULL) {
             index += c->doCommand(commands, index);
             //   delete (c); - not good!
-        } else if (mapHolder->getSymbolTable().count(commands[index])) {
-            c = new DefinitionCommand; // symbol without var //
-            index += c->doCommand(commands, index);
-            delete (c);
-        } else if (commands.at(index) == "if" || commands.at(index) == "while") {
-            callCondition();
+        } else if (c == NULL) {
+            mutex mutex1;
+            mutex1.lock();
+            map<string, double> symbolTableCopy = mapHolder->getSymbolTable();
+            mutex1.unlock();
+            if (symbolTableCopy.count(commands[index])) {
+                c = new DefinitionCommand; // symbol without var //
+                index += c->doCommand(commands, index);
+                delete (c);
+            } else if (commands.at(index) == "if" || commands.at(index) == "while") {
+                callCondition();
+            }
         }
     }
     index = 0;

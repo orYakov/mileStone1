@@ -28,6 +28,7 @@ int ConnectCommand::doCommand(vector<string> commandOperation, int index) {
 }
 
 void ConnectCommand::connectToServer(string ip, int port) {
+    mutex mutex1;
     int sockfd, portno, n;
     struct sockaddr_in serv_addr;
     struct hostent *server;
@@ -64,25 +65,31 @@ void ConnectCommand::connectToServer(string ip, int port) {
     serv_addr.sin_port = htons(portno);
 
     /* Now connect to the server */
-    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) <
-        0) {
+    cout<< "trying to connect"<<endl;
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         perror("ERROR connecting");
         throw "ERROR connecting";
     }
-
+    cout<< "connect successfull"<<endl;
+    mutex1.lock();
     MapHolder* mapHolder = MapHolder::getInstance();
     mapHolder->setSockfd(sockfd);
+    mutex1.unlock();
 }
     void ConnectCommand::sendData(string path, double value, int sockfd) {
+    if (sockfd == 0) {
+        return;
+    }
     /* Now ask for a message from the user, this message
        * will be read by server
     */
-    int n;
+    ssize_t n;
     char buffer[256];
     string message;
     string strValue = to_string(value);
-    message = "set " + path + " " + strValue;
+    message = "set " + path.substr(1) + " " + strValue + "\r\n";
     const char* messageCstyle = message.c_str();
+        bzero(buffer,256);
     strcpy(buffer, messageCstyle);
     //    printf("Please enter the message: ");
 //    bzero(buffer,256);
@@ -98,13 +105,13 @@ void ConnectCommand::connectToServer(string ip, int port) {
 
     /* Now read server response */
     bzero(buffer,256);
-    n = read(sockfd, buffer, 255);
+    //n = read(sockfd, buffer, 255);
 
-    if (n < 0) {
-        perror("ERROR reading from socket");
-        throw "ERROR reading from socket";
-    }
+//    if (n < 0) {
+//        perror("ERROR reading from socket");
+//        throw "ERROR reading from socket";
+//    }
 
-    printf("%s\n",buffer);
+    //printf("%s\n",buffer);
 
 }

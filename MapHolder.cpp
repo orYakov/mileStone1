@@ -97,3 +97,11 @@ bool MapHolder::isStopThreadLoop() const {
 void MapHolder::setStopThreadLoop(bool stopThreadLoop) {
     MapHolder::stopThreadLoop = stopThreadLoop;
 }
+
+thread *MapHolder::getServerThread() const {
+    return serverThread;
+}
+
+void MapHolder::setServerThread(thread *serverThread) {
+    MapHolder::serverThread = serverThread;
+}
