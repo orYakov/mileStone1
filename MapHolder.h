@@ -7,6 +7,7 @@
 #include <iostream>
 #include <map>
 #include <vector>
+#include <mutex>
 
 using namespace std;
 
@@ -17,6 +18,9 @@ class MapHolder {
     map<string, string> varAndPathMap;
     //string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
     vector<string> vars;
+    //mutex mutex1;
+    int sockfd = 0;
+    bool stopThreadLoop = false;
 
     // Private constructor so that no objects can be created.
     MapHolder();
@@ -49,6 +53,14 @@ public:
     void setVarPath(string var, string path);
 
     const vector<string> &getVars() const;
+
+    int getSockfd() const;
+
+    void setSockfd(int sockfd);
+
+    bool isStopThreadLoop() const;
+
+    void setStopThreadLoop(bool stopThreadLoop);
 };
 
 

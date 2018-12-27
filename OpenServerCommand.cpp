@@ -16,9 +16,11 @@
 #include <thread>
 #include "MapHolder.h"
 #include "Parser.h"
+#include <mutex>
 
 int OpenServerCommand::doCommand(vector<string> commandOperation, int index) {
     int resIndex = Parser::getReturnIndex(commandOperation, index);
+    MapHolder* mapHolder = MapHolder::getInstance();
     ShuntingYard shuntingYard;
     string strPort = commandOperation[index + 1];
     string strWaitTime = commandOperation[index + 2];
@@ -26,7 +28,7 @@ int OpenServerCommand::doCommand(vector<string> commandOperation, int index) {
     int waitTime = (int) (shuntingYard.createExpression(strWaitTime)->calculate());
     //cout << "starting to create server" <<endl;
     bool toDetach = false;
-    std::thread serverThread(createServer, port, waitTime, &toDetach);
+    std::thread serverThread(createServer, port, waitTime, &toDetach, &mapHolder);
     while (true) {
         if (toDetach) {
             break;
@@ -67,7 +69,8 @@ void OpenServerCommand::initPathes(vector<string> &pathes) {
 }
 
 
-void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach) {
+void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, MapHolder** pMapHolder) {
+    mutex mutex1;
     vector<string> pathes;
     int sockfd, newsockfd, portno, clilen;
     char buffer[256];
@@ -126,13 +129,16 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach) {
         }
         *toDetach = true;
 
-        MapHolder* mapHolder = MapHolder::getInstance();
+        //MapHolder* mapHolder = MapHolder::getInstance();
         string curBuffer = buffer;
         vector<string> lexedBuffer = littleLexer(curBuffer, ',');
         for (int i = 0; i < lexedBuffer.size(); ++i) {
             string path = pathes[i];
             double pathValue = std::stod(lexedBuffer[i]);
-            mapHolder->setPathValue(path, pathValue);
+            mutex1.lock();
+            //mapHolder->setPathValue(path, pathValue);
+            (*pMapHolder)->setPathValue(path, pathValue);
+            mutex1.unlock();
         }
 
         printf("Here is the message: %s\n", buffer);
@@ -145,6 +151,8 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach) {
             throw "error writing to socket";
         }
         //sleep(1 / waitTime);
+
+        //if (*(pMapHolder)->get
 
     }
 }

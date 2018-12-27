@@ -16,6 +16,10 @@ int PrintCommand::doCommand(vector<string> commandOperation, int index) {
     int resIndex = Parser::getReturnIndex(commandOperation, index);
 
     for (int i = 0; i < vars.size(); ++i) {
+        size_t quotes = toPrint.find("\"");
+        if (quotes != string::npos) {
+            break;
+        }
         size_t found = toPrint.find(vars[i]);
         if (found != string::npos) {
             if (symbols.count(vars[i])) {

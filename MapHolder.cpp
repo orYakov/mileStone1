@@ -3,9 +3,10 @@
 //
 
 #include "MapHolder.h"
-MapHolder* MapHolder::instance = nullptr;
 
- MapHolder *MapHolder::getInstance() {
+MapHolder *MapHolder::instance = nullptr;
+
+MapHolder *MapHolder::getInstance() {
     if (instance == nullptr) {
         instance = new MapHolder;
     }
@@ -49,22 +50,28 @@ string MapHolder::getPathByVar(string var) {
 }
 
 void MapHolder::setVarValue(string var, double value) {
+    //mutex1.lock();
     symbolTable[var] = value;
-    for (int i = 0; i< vars.size(); ++i) {
-        if (vars[i] == var){
+    for (int i = 0; i < vars.size(); ++i) {
+        if (vars[i] == var) {
             return;
         }
     }
     vars.push_back(var);
+    //mutex1.unlock();
 }
 
 void MapHolder::setPathValue(string path, double value) {
+    //mutex1.lock();
     pathAndValueMap[path] = value;
+    //mutex1.unlock();
 }
 
 void MapHolder::setVarPath(string var, string path) {
+    //mutex1.lock();
     varAndPathMap[var] = path;
     vars.push_back(var);
+    //mutex1.unlock();
 }
 
 const vector<string> &MapHolder::getVars() const {
@@ -74,4 +81,19 @@ const vector<string> &MapHolder::getVars() const {
 MapHolder::MapHolder() {
 
 }
-////
+
+int MapHolder::getSockfd() const {
+    return sockfd;
+}
+
+void MapHolder::setSockfd(int sockfd) {
+    MapHolder::sockfd = sockfd;
+}
+
+bool MapHolder::isStopThreadLoop() const {
+    return stopThreadLoop;
+}
+
+void MapHolder::setStopThreadLoop(bool stopThreadLoop) {
+    MapHolder::stopThreadLoop = stopThreadLoop;
+}

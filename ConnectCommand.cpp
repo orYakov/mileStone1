@@ -1,117 +1,110 @@
 ////
 //// Created by noa on 12/25/18.
 ////
-//
-//
-//
-//#include "ConnectCommand.h"
-//#include <stdio.h>
-//#include <stdlib.h>
-//#include "MapHolder.h"
-//#include <netdb.h>
-//#include <sys/socket.h>
-//#include <unistd.h>
-//#include <netinet/in.h>
-//
-//#include <string.h>
-//
-//
-//struct thread_data {
-//    int port;
-//    string ip;
-//};
-//
-//void *runClient(void *c) {
-//    struct thread_data *my_thread_data;
-//    my_thread_data = (struct thread_data *) c;
-//    int port = my_thread_data->port;
-//    string ip = my_thread_data->ip;
-//    int sockfd, portno, n;
-//    struct sockaddr_in serv_addr;
-//    struct hostent *server;
-//
-//    string buffer;
-//
-//    portno = port;
-//
-//    /* Create a socket point */
-//    sockfd = socket(AF_INET, SOCK_STREAM, 0);
-//
-//    if (sockfd < 0) {
-//        perror("ERROR opening socket");
-//        exit(1);
-//    }
-//    const char *x = ip.c_str();
-//    server = gethostbyname(x);
-//
-//    if (server == NULL) {
-//        fprintf(stderr, "ERROR, no such host\n");
+#include <stdio.h>
+#include <stdlib.h>
+
+#include <netdb.h>
+#include <sys/socket.h>
+#include <unistd.h>
+#include <netinet/in.h>
+
+#include <string.h>
+#include "ConnectCommand.h"
+#include "Parser.h"
+#include "MapHolder.h"
+
+int ConnectCommand::doCommand(vector<string> commandOperation, int index) {
+    int resIndex = Parser::getReturnIndex(commandOperation, index);
+    ShuntingYard shuntingYard;
+    string ip = commandOperation[index + 1]; //stays as string
+    string strPort = commandOperation[index + 2];
+    int port = (int) (shuntingYard.createExpression(strPort)->calculate());
+    connectToServer(ip, port);
+
+
+
+    return resIndex;
+}
+
+void ConnectCommand::connectToServer(string ip, int port) {
+    int sockfd, portno, n;
+    struct sockaddr_in serv_addr;
+    struct hostent *server;
+
+    //char buffer[256];
+
+//    if (argc < 3) {
+//        fprintf(stderr,"usage %s hostname port\n", argv[0]);
 //        exit(0);
 //    }
-//
-//    bzero((char *) &serv_addr, sizeof(serv_addr));
-//    serv_addr.sin_family = AF_INET;
-//    bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr, server->h_length);
-//    serv_addr.sin_port = htons(portno);
-//
-//    /* Now connect to the server */
-//    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-//        perror("ERROR connecting");
-//        exit(1);
-//    }
-//
-//    /* Now ask for a message from the user, this message
-//       * will be read by server
-//    */
-////if there is new data
-//    while (true) {
-//        if (getIsNewData()) {
-//            // pthread_mutex_lock(&mutex);
-//            buffer = "set" + data.getBind()->getName() + to_string(data.getBind()->getValue());
-//            /* Send message to the server */
-//            const char *chr = buffer.c_str();
-//            n = write(sockfd, chr, strlen(chr));
-//            data.setIsNewData(false);
-//            if (n < 0) {
-//                perror("ERROR writing to socket");
-//                exit(1);
-//            }
-//            // pthread_mutex_unlock(&mutex);
-//        }
-//    }
-//
-//    /* Now read server response */
-////    bzero(buffer, 256);
-////    n = read(sockfd, buffer, 255);
-////
-////    if (n < 0) {
-////        perror("ERROR reading from socket");
-////        exit(1);
-////    }
-//
-//    cout << buffer;
-//    return 0;
-//}
-//
-//double ConnectCommand::doCommand() {
-//    pthread_t thread;
-//    int rc;
-//    thread_data *my_thread_data = new thread_data();
-//    my_thread_data->port = this->port;
-//    my_thread_data->ip = this->ip;
-//    rc = pthread_create(&thread, nullptr, runClient, my_thread_data);
-//    if (rc) {
-//        cout << "Error! unable to create thread";
-//        exit(1);
-//    }
-//}
-//
-//ConnectCommand::ConnectCommand(string ip, int port) {
-//    this->ip = ip;
-//    this->port = port;
-//}
-//
-//void ConnectCommand::sendData(string path, double value) {
-//
-//}
-////
+
+    portno = port;
+
+    /* Create a socket point */
+    sockfd = socket(AF_INET, SOCK_STREAM, 0);
+
+    if (sockfd < 0) {
+        perror("ERROR opening socket");
+        throw "ERROR opening socket";
+    }
+
+    const char *ipCstyle = ip.c_str();
+    server = gethostbyname(ipCstyle);
+
+    if (server == NULL) {
+        fprintf(stderr, "ERROR, no such host\n");
+        throw "ERROR, no such host\n";
+    }
+
+    bzero((char *) &serv_addr, sizeof(serv_addr));
+    serv_addr.sin_family = AF_INET;
+    bcopy((char *) server->h_addr, (char *) &serv_addr.sin_addr.s_addr,
+          server->h_length);
+    serv_addr.sin_port = htons(portno);
+
+    /* Now connect to the server */
+    if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) <
+        0) {
+        perror("ERROR connecting");
+        throw "ERROR connecting";
+    }
+
+    MapHolder* mapHolder = MapHolder::getInstance();
+    mapHolder->setSockfd(sockfd);
+}
+    void ConnectCommand::sendData(string path, double value, int sockfd) {
+    /* Now ask for a message from the user, this message
+       * will be read by server
+    */
+    int n;
+    char buffer[256];
+    string message;
+    string strValue = to_string(value);
+    message = "set " + path + " " + strValue;
+    const char* messageCstyle = message.c_str();
+    strcpy(buffer, messageCstyle);
+    //    printf("Please enter the message: ");
+//    bzero(buffer,256);
+//    fgets(buffer,255,stdin);
+
+    /* Send message to the server */
+    n = write(sockfd, buffer, strlen(buffer));
+
+    if (n < 0) {
+        perror("ERROR writing to socket");
+        throw "ERROR writing to socket";
+    }
+
+    /* Now read server response */
+    bzero(buffer,256);
+    n = read(sockfd, buffer, 255);
+
+    if (n < 0) {
+        perror("ERROR reading from socket");
+        throw "ERROR reading from socket";
+    }
+
+    printf("%s\n",buffer);
+
+}
