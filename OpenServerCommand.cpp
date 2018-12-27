@@ -37,6 +37,9 @@ int OpenServerCommand::doCommand(vector<string> commandOperation, int index) {
     if (toDetach) {
         serverThread.detach();
     }
+
+
+
     //mapHolder->setServerThread(&serverThread);
     //serverThread.detach();
     //createServer(port, waitTime);
@@ -145,7 +148,7 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, Map
         }
 
 
-        printf("Here is the message: %s\n", buffer);
+        //printf("Here is the message: %s\n", buffer);
 
         /* Write a response to the client */
         n = write(newsockfd, "I got your message", 18);

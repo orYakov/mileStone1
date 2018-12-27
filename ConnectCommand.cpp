@@ -66,6 +66,11 @@ void ConnectCommand::connectToServer(string ip, int port) {
 
     /* Now connect to the server */
     cout<< "trying to connect"<<endl;
+    mutex1.lock();
+    cout<< "press something"<<endl;
+    char i;
+    cin>> i;
+    mutex1.unlock();
     if (connect(sockfd, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
         perror("ERROR connecting");
         throw "ERROR connecting";
@@ -104,7 +109,7 @@ void ConnectCommand::connectToServer(string ip, int port) {
     }
 
     /* Now read server response */
-    bzero(buffer,256);
+    //bzero(buffer,256);
     //n = read(sockfd, buffer, 255);
 
 //    if (n < 0) {
