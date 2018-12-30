@@ -13,7 +13,7 @@ MapHolder *MapHolder::getInstance() {
     return instance;
 }
 
-const map<string, double> &MapHolder::getSymbolTable() const {
+const map<string, double>& MapHolder::getSymbolTable() const {
     return symbolTable;
 }
 
@@ -50,28 +50,31 @@ string MapHolder::getPathByVar(string var) {
 }
 
 void MapHolder::setVarValue(string var, double value) {
-    //mutex1.lock();
+    lock_guard<mutex> g(mutex1);
     symbolTable[var] = value;
+    //cout << var + " "; cout << value<<endl;
     for (int i = 0; i < vars.size(); ++i) {
         if (vars[i] == var) {
             return;
         }
     }
     vars.push_back(var);
-    //mutex1.unlock();
+
 }
 
 void MapHolder::setPathValue(string path, double value) {
-    //mutex1.lock();
+    lock_guard<mutex> g(mutex1);
+    if (!pathAndValueMap.count(path) || pathAndValueMap.empty()) {
+        pathAndValueMap.insert(pair<string, double>(path, value));
+        return;
+    }
     pathAndValueMap[path] = value;
-    //mutex1.unlock();
 }
 
 void MapHolder::setVarPath(string var, string path) {
-    //mutex1.lock();
+    lock_guard<mutex> g(mutex1);
     varAndPathMap[var] = path;
     vars.push_back(var);
-    //mutex1.unlock();
 }
 
 const vector<string> &MapHolder::getVars() const {

@@ -5,8 +5,6 @@
 #include "LoopCommand.h"
 
 int LoopCommand::doCommand(vector<string> commandOperation, int index) {
-    index = 0;
-    MapHolder* mapHolder = MapHolder::getInstance();
     string strExp1 = commandOperation[1];
     string strExp2 = commandOperation[3];
     double firstExp = shuntingYard.createExpression(strExp1)->calculate();

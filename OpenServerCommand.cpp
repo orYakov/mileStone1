@@ -20,23 +20,16 @@
 
 int OpenServerCommand::doCommand(vector<string> commandOperation, int index) {
     int resIndex = Parser::getReturnIndex(commandOperation, index);
-    MapHolder* mapHolder = MapHolder::getInstance();
+    MapHolder *mapHolder = MapHolder::getInstance();
     ShuntingYard shuntingYard;
     string strPort = commandOperation[index + 1];
     string strWaitTime = commandOperation[index + 2];
     int port = (int) (shuntingYard.createExpression(strPort)->calculate());
-    int waitTime = (int) (shuntingYard.createExpression(strWaitTime)->calculate());
+    int waitTime = (int) (shuntingYard.createExpression(
+            strWaitTime)->calculate());
     //cout << "starting to create server" <<endl;
-    bool toDetach = false;
-    std::thread serverThread(createServer, port, waitTime, &toDetach, &mapHolder);
-    while (true) {
-        if (toDetach) {
-            break;
-        }
-    }
-    if (toDetach) {
-        serverThread.detach();
-    }
+    std::thread serverThread(createServer, port, waitTime, mapHolder);
+    serverThread.detach();
 
 
 
@@ -48,39 +41,46 @@ int OpenServerCommand::doCommand(vector<string> commandOperation, int index) {
 }
 
 void OpenServerCommand::initPathes(vector<string> &pathes) {
-    pathes.push_back("/instrumentation/airspeed-indicator/indicated-speed-kt");
-    pathes.push_back("/instrumentation/altimeter/indicated-altitude-ft");
-    pathes.push_back("/instrumentation/altimeter/pressure-alt-ft");
+    pathes.emplace_back(
+            "/instrumentation/airspeed-indicator/indicated-speed-kt");
+    pathes.emplace_back("/instrumentation/altimeter/indicated-altitude-ft");
+    pathes.emplace_back("/instrumentation/altimeter/pressure-alt-ft");
     pathes.push_back("/instrumentation/attitude-indicator/indicated-pitch-deg");
-    pathes.push_back("/instrumentation/attitude-indicator/indicated-roll-deg");
-    pathes.push_back("/instrumentation/attitude-indicator/internal-pitch-deg");
-    pathes.push_back("/instrumentation/attitude-indicator/internal-roll-deg");
-    pathes.push_back("/instrumentation/encoder/indicated-altitude-ft");
-    pathes.push_back("/instrumentation/encoder/pressure-alt-ft");
-    pathes.push_back("/instrumentation/gps/indicated-altitude-ft");
-    pathes.push_back("/instrumentation/gps/indicated-ground-speed-kt");
-    pathes.push_back("/instrumentation/gps/indicated-vertical-speed");
-    pathes.push_back("/instrumentation/heading-indicator/indicated-heading-deg");
-    pathes.push_back("/instrumentation/magnetic-compass/indicated-heading-deg");
-    pathes.push_back("/instrumentation/slip-skid-ball/indicated-slip-skid");
-    pathes.push_back("/instrumentation/turn-indicator/indicated-turn-rate");
-    pathes.push_back("/instrumentation/vertical-speed-indicator/indicated-speed-fpm");
-    pathes.push_back("/controls/flight/aileron");
-    pathes.push_back("/controls/flight/elevator");
-    pathes.push_back("/controls/flight/rudder");
-    pathes.push_back("/controls/flight/flaps");
-    pathes.push_back("/controls/engines/engine/throttle");
-    pathes.push_back("/engines/engine/rpm");
+    pathes.emplace_back(
+            "/instrumentation/attitude-indicator/indicated-roll-deg");
+    pathes.emplace_back(
+            "/instrumentation/attitude-indicator/internal-pitch-deg");
+    pathes.emplace_back(
+            "/instrumentation/attitude-indicator/internal-roll-deg");
+    pathes.emplace_back("/instrumentation/encoder/indicated-altitude-ft");
+    pathes.emplace_back("/instrumentation/encoder/pressure-alt-ft");
+    pathes.emplace_back("/instrumentation/gps/indicated-altitude-ft");
+    pathes.emplace_back("/instrumentation/gps/indicated-ground-speed-kt");
+    pathes.emplace_back("/instrumentation/gps/indicated-vertical-speed");
+    pathes.emplace_back(
+            "/instrumentation/heading-indicator/indicated-heading-deg");
+    pathes.emplace_back(
+            "/instrumentation/magnetic-compass/indicated-heading-deg");
+    pathes.emplace_back("/instrumentation/slip-skid-ball/indicated-slip-skid");
+    pathes.emplace_back("/instrumentation/turn-indicator/indicated-turn-rate");
+    pathes.emplace_back(
+            "/instrumentation/vertical-speed-indicator/indicated-speed-fpm");
+    pathes.emplace_back("/controls/flight/aileron");
+    pathes.emplace_back("/controls/flight/elevator");
+    pathes.emplace_back("/controls/flight/rudder");
+    pathes.emplace_back("/controls/flight/flaps");
+    pathes.emplace_back("/controls/engines/engine/throttle");
+    pathes.emplace_back("/engines/engine/rpm");
 }
 
 
-void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, MapHolder** pMapHolder) {
-    mutex mutex1;
+void
+OpenServerCommand::createServer(int port, int waitTime, MapHolder *pMapHolder) {
     vector<string> pathes;
     int sockfd, newsockfd, portno, clilen;
     char buffer[256];
     struct sockaddr_in serv_addr, cli_addr;
-    int n;
+    ssize_t n;
 
     initPathes(pathes);
 
@@ -89,7 +89,7 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, Map
 
     if (sockfd < 0) {
         perror("ERROR opening socket");
-        throw "cannot open socket";
+        exit(1);
     }
 
     /* Initialize socket structure */
@@ -113,58 +113,54 @@ void OpenServerCommand::createServer(int port, int waitTime, bool *toDetach, Map
     clilen = sizeof(cli_addr);
 
     /* Accept actual connection from the client */
-    cout<<"Try to connect"<<endl;
+    cout << "Try to connect" << endl;
     newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,
                        (socklen_t *) &clilen);
-    cout<<"connection succesful"<< endl;
-    //*toDetach = true; //TODO delete this
+    cout << "connection succesful" << endl;
+
     if (newsockfd < 0) {
         perror("ERROR on accept");
-        throw "error in accepting socket";
+        exit(1);
     }
 
     /* If connection is established then start communicating */
     while (true) {
-        bzero(buffer, 256);
-        n = read(newsockfd, buffer, 255);
 
-        if (n < 0) {
-            perror("ERROR reading from socket");
-            throw "cannot read socket";
+        string curBuffer;
+        while (curBuffer.find('\n') == string::npos) {
+            char c;
+            n = read(newsockfd, &c, 1);
+            if (n < 0) {
+                perror("ERROR reading from socket");
+                exit(1);
+            }
+
+            curBuffer += c;
         }
-        *toDetach = true;
 
-        //MapHolder* mapHolder = MapHolder::getInstance();
-        string curBuffer = buffer;
+
+        curBuffer.pop_back(); //todo show michael
         curBuffer += ",";
+
         vector<string> lexedBuffer = littleLexer(curBuffer, ',');
+
         for (int i = 0; i < lexedBuffer.size(); ++i) {
             string path = pathes[i];
-            double pathValue = std::stod(lexedBuffer[i]);
-            mutex1.lock();
-            //mapHolder->setPathValue(path, pathValue);
-            (*pMapHolder)->setPathValue(path, pathValue);
-            mutex1.unlock();
+
+            try {
+                double pathValue = std::stod(lexedBuffer[i]);
+                pMapHolder->setPathValue(path, pathValue);
+                for (auto &it : pMapHolder->getVarAndPathMap()) {
+                    if (it.second == path) {
+                        string varToUpdate = it.first;
+                        pMapHolder->setVarValue(varToUpdate, pathValue);
+                    }
+                }
+            } catch (std::exception &e) {
+                cout << e.what() << endl;
+            }
         }
 
-
-        //printf("Here is the message: %s\n", buffer);
-
-        /* Write a response to the client */
-        n = write(newsockfd, "I got your message", 18);
-
-        if (n < 0) {
-            perror("ERROR writing to socket");
-            throw "error writing to socket";
-        }
-        sleep(1 / waitTime);
-
-//        mutex1.lock();
-//        if ((*pMapHolder)->isStopThreadLoop()) {
-//            mutex1.unlock();
-//            break;
-//        }
-//        mutex1.unlock();
     }
 }
 
@@ -172,12 +168,13 @@ vector<string> OpenServerCommand::littleLexer(string line, char c) {
     vector<string> res;
     char delimiter = c;
     string token;
-    int pos = 0;
+    size_t pos = 0;
     while ((pos = line.find(delimiter)) != string::npos) {
         token = line.substr(0, pos);
         line.erase(0, pos + 1);
         res.push_back(token);
     }
+    return res;
 }
 
 

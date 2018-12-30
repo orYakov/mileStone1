@@ -33,7 +33,7 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
     //}
     if (isBind) {
         // create a new symbol
-        mutex1.lock();
+        //mutex1.lock();
         mapHolder->setVarPath(var, commandOperation[index + 3]);
         double pathValue;
         if (mapHolder->getPathAndValueMap().count(commandOperation[index + 3])) {
@@ -42,7 +42,7 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
             pathValue = 0;
         }
         mapHolder->setVarValue(var, pathValue);
-        mutex1.unlock();
+        //mutex1.unlock();
         //mapHolder->setPathValue(commandOperation[index + 3], 0); // TODO TODO
 
     } else {
@@ -50,14 +50,14 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
         string varToFind = commandOperation[index + 2]; // [0] is var, [1] is "=", [2] is another var
 
         // create a new symbol: var and the value of an already existing var
-        mutex1.lock();
+        //mutex1.lock();
         map<string, double> symbolTableCopy = mapHolder->getSymbolTable();
-        mutex1.unlock();
+        //mutex1.unlock();
         if (symbolTableCopy.count(varToFind)) {
-            mutex1.lock();
+            //mutex1.lock();
             double newValue = mapHolder->getSymbolTable().at(varToFind);
             mapHolder->setVarValue(var, newValue);
-            mutex1.unlock();
+            //mutex1.unlock();
         } else {
             // calculate the expression after the '=', and create a new symbol"
             // var and the calculated value of the expression
@@ -67,9 +67,9 @@ int DefineVarCommand::doCommand(vector<string> commandOperation, int index) {
             double newValue = expression->calculate();
             delete expression;
 //            symbolTable[var] = newValue;
-            mutex1.lock();
+            //mutex1.lock();
             mapHolder->setVarValue(var, newValue);
-            mutex1.unlock();
+            //mutex1.unlock();
 //            symbolTable.insert(pair<string, double>(var, newValue));
         }
     }

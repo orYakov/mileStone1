@@ -52,10 +52,10 @@ Expression *ShuntingYard::createExpression(string tokens) {
 
     // replace possible vars of the expression-to-be
     MapHolder* mapHolder = MapHolder::getInstance();
-    mutex1.lock();
+    //mutex1.lock();
     vector<string> vars = mapHolder->getVars();
     map<string, double> symbols = mapHolder->getSymbolTable();
-    mutex1.unlock();
+    //mutex1.unlock();
     double replaceValue;
     for (int i = 0; i < vars.size(); ++i) {
         size_t found = tokens.find(vars[i]);

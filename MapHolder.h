@@ -19,8 +19,8 @@ class MapHolder {
     map<string, string> varAndPathMap;
     //string breaks, throttle, heading, airspeed, roll, pitch, rudder, aileron, elevator, alt, h0;
     vector<string> vars;
-    //mutex mutex1;
-    int sockfd = 0;
+    mutex mutex1;
+    int sockfd = -1;
     bool stopThreadLoop = false;
     thread* serverThread;
 public:

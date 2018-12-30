@@ -67,14 +67,14 @@ void Parser::parse() {
             c = stringCommandMap.find(commands[index])->second;
         }
 
-        if (c != NULL) {
+        if (c != nullptr) {
             index += c->doCommand(commands, index);
             //   delete (c); - not good!
-        } else if (c == NULL) {
-            mutex mutex1;
-            mutex1.lock();
+        } else {
+            //mutex mutex1;
+            //mutex1.lock();
             map<string, double> symbolTableCopy = mapHolder->getSymbolTable();
-            mutex1.unlock();
+            //mutex1.unlock();
             if (symbolTableCopy.count(commands[index])) {
                 c = new DefinitionCommand; // symbol without var //
                 index += c->doCommand(commands, index);

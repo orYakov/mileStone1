@@ -7,13 +7,13 @@
 #include "Parser.h"
 
 int PrintCommand::doCommand(vector<string> commandOperation, int index) {
-    mutex mutex1;
+    //mutex mutex1;
     string toPrint = commandOperation[index + 1]; // skip the word "print"
     MapHolder* mapHolder = MapHolder::getInstance();
-    mutex1.lock();
+    //mutex1.lock();
     vector<string> vars = mapHolder->getVars();
     map<string, double> symbols = mapHolder->getSymbolTable();
-    mutex1.unlock();
+    //mutex1.unlock();
     //double replaceValue;
     bool createExp = false;
     int resIndex = Parser::getReturnIndex(commandOperation, index);

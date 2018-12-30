@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
  * 0.166667
  * 0.166667
  * */
-
+pthread_exit(NULL);
     return 0;
 }
 
